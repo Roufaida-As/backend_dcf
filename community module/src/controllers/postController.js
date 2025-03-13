@@ -5,7 +5,7 @@ exports.createPost = async (req, res) => {
     const images = req.files; // Multiple uploaded images
 
     try {
-        // 1️⃣ Insert post into `accounts_post`
+        
         const postResult = await pool.query(
             "INSERT INTO accounts_post (user_id, content, created_at) VALUES ($1, $2, NOW()) RETURNING id",
             [user_id, content]
@@ -13,7 +13,7 @@ exports.createPost = async (req, res) => {
 
         const postId = postResult.rows[0].id;
 
-        // 2️⃣ Insert images into `accounts_postimage` (if any)
+     
         if (images && images.length > 0) {
             const imageQueries = images.map((file) =>
                 pool.query(

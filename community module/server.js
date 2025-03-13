@@ -9,7 +9,7 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }, 
 });
 
-// Test the connection
+
 pool.connect()
   .then(client => {
     console.log("Connected to PostgreSQL");

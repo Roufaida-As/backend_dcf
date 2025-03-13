@@ -11,14 +11,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// // Import Routes
-// const postRoutes = require("./routes/postRoutes");
-// const forumRoutes = require("./routes/forumRoutes");
-// const rewardRoutes = require("./routes/rewardRoutes");
-
-// app.use("/api/posts", postRoutes);
-// app.use("/api/forums", forumRoutes);
-// app.use("/api/rewards", rewardRoutes);
 
 app.use("/posts", postRoutes);
 app.use("/like-a-post", likeRoutes);
