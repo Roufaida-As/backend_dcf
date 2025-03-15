@@ -1,14 +1,14 @@
 const pool = require("../config/db");
 
 exports.createPost = async (req, res) => {
-    const { user_id, content } = req.body;
+    const { user_id, content, event_id } = req.body;
     const images = req.files; // Multiple uploaded images
 
     try {
         
         const postResult = await pool.query(
-            "INSERT INTO accounts_post (user_id, content, created_at) VALUES ($1, $2, NOW()) RETURNING id",
-            [user_id, content]
+            "INSERT INTO accounts_post (user_id, content, created_at, event_id) VALUES ($1, $2, NOW(),$3) RETURNING id",
+            [user_id, content, event_id]
         );
 
         const postId = postResult.rows[0].id;
@@ -24,7 +24,7 @@ exports.createPost = async (req, res) => {
             await Promise.all(imageQueries);
         }
 
-        res.status(201).json({ message: "Post created successfully!", postId, images, content });
+        res.status(201).json({ message: "Post created successfully!", postId, images, content,event_id, user_id });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -33,14 +33,14 @@ exports.createPost = async (req, res) => {
 
 exports.updatePost = async (req, res) => {
     const { post_id } = req.params;
-    const { content } = req.body;
+    const { content, event_id } = req.body;
     const images = req.files;
 
     try {
         // Update post content
         await pool.query(
-            "UPDATE accounts_post SET content = $1 WHERE id = $2",
-            [content, post_id]
+            "UPDATE accounts_post SET content = $1 WHERE id = $2 AND event_id = $3",
+            [content, post_id, event_id]
         );
 
         // Delete old images & add new ones
@@ -63,7 +63,6 @@ exports.updatePost = async (req, res) => {
 
 exports.deletePost = async (req, res) => {
     const { post_id } = req.params;
-
     try {
         // Delete images first (to maintain foreign key constraints)
         await pool.query("DELETE FROM accounts_postimage WHERE post_id = $1", [post_id]);
